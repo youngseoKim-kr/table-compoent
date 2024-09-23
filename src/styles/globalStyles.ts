@@ -1,6 +1,9 @@
 import { css } from '@emotion/react'
+import { colorPalette } from '@styles/colors'
 
 export default css`
+  ${colorPalette}
+
   html,
   body,
   div,

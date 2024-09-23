@@ -17,8 +17,11 @@
       "@layouts/*": [
         "components/layouts/*"
       ],
-      "@modal/*": [
+      "@modals/*": [
         "components/modal/*"
+      ],
+      "@models/*": [
+        "models/*"
       ],
       "@hooks/*": [
         "hooks/*"
