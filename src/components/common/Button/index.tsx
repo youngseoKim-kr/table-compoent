@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { ButtonColor, buttonColorMap, ButtonSize, buttonSizeMap, buttonWeakMap } from '@styles/button'
 import React from 'react'
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: ButtonColor
   size?: ButtonSize
   weak?: boolean
@@ -11,7 +11,7 @@ interface ButtonProps {
   children: React.ReactNode
 }
 
-function Button({ color = 'primary', size = 'small', weak, full, disabled, children }: ButtonProps) {
+function Button({ color = 'primary', size = 'small', weak, full, disabled, children, ...props }: ButtonProps) {
   return (
     <button
       css={css`
@@ -29,6 +29,7 @@ function Button({ color = 'primary', size = 'small', weak, full, disabled, child
         `};
       `}
       disabled={disabled}
+      {...props}
     >
       {children}
     </button>

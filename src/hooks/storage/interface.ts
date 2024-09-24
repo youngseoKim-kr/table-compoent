@@ -1,11 +1,5 @@
-interface ToDo {
-  id: number
-  title: string
-  content: string
-  date: string
-  isCompleted: boolean
-}
+import { ToDo } from '@models/Todo'
 
 export type StorageType = {
-  todo: ToDo[]
+  todoData: ToDo[]
 }

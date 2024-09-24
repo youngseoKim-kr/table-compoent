@@ -1,9 +1,9 @@
-import { CSSProperties, ReactNode } from 'react'
+import React, { CSSProperties, ReactNode } from 'react'
 import { css } from '@emotion/react'
 import { Colors, colors } from '@styles/colors'
 import { Typography, typographyMap } from '@styles/typography'
 
-interface TextProps {
+interface TextProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode
   typography?: Typography
   color?: Colors
@@ -23,6 +23,7 @@ function Text({
   fontWeight,
   bold,
   as: Component = 'span',
+  ...props
 }: TextProps) {
   return (
     <Component
@@ -33,6 +34,7 @@ function Text({
         display: ${display || 'inline'};
         text-align: ${textAlign};
       `}
+      {...props}
     >
       {children}
     </Component>

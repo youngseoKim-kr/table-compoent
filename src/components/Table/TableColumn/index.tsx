@@ -2,12 +2,13 @@ import { css } from '@emotion/react'
 import Text from '@common/Text'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 
-interface TableHeaderProps {
+interface TableColumnProps {
   column: string
   isSortable?: boolean
+  onSortTodo: (column: string) => () => void
 }
 
-function TableHeader({ column, isSortable = true }: TableHeaderProps) {
+function TableColumn({ column, isSortable = true, onSortTodo }: TableColumnProps) {
   return (
     <th
       key={column}
@@ -22,6 +23,7 @@ function TableHeader({ column, isSortable = true }: TableHeaderProps) {
       </Text>
       {(column === 'id' || column === 'date') && isSortable && (
         <ArrowDownwardIcon
+          onClick={onSortTodo(column)}
           css={css(`
               font-size: 14px;
               cursor: pointer;
@@ -32,4 +34,4 @@ function TableHeader({ column, isSortable = true }: TableHeaderProps) {
   )
 }
 
-export default TableHeader
+export default TableColumn
