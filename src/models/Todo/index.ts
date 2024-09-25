@@ -10,7 +10,7 @@ export type Headers = {
   label: string
   key: string
   isSortable: boolean
-  isAsc: boolean
+  isAsc: boolean | null
   type: 'text' | 'check' | 'date'
 }
 

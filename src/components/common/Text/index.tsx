@@ -17,7 +17,7 @@ interface TextProps extends React.HTMLAttributes<HTMLDivElement> {
 function Text({
   children,
   typography = 't5',
-  color = 'black',
+  color,
   display,
   textAlign,
   fontWeight,
@@ -30,7 +30,7 @@ function Text({
       css={css`
         ${typographyMap[typography]};
         font-weight: ${bold ? 'bold' : fontWeight || 'normal'};
-        color: ${colors[color]};
+        color: ${color && colors[color]};
         display: ${display || 'inline'};
         text-align: ${textAlign};
       `}
