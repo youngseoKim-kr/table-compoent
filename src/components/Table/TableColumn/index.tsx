@@ -11,14 +11,7 @@ interface TableColumnProps {
 
 function TableColumn({ column, onClickHeaderColumn }: TableColumnProps) {
   return (
-    <th
-      align="center"
-      css={css(`
-                padding: 8px 16px;
-                border-bottom: 1px solid #e0e0e0;
-                cursor: ${column.isSortable ? 'pointer' : 'default'};
-              `)}
-    >
+    <th align="center" css={[styles.th, { cursor: column.isSortable ? 'pointer' : 'default' }]}>
       <Text typography="t3" bold={true} onClick={() => onClickHeaderColumn(column)}>
         {column.label}
       </Text>
@@ -34,6 +27,10 @@ function TableColumn({ column, onClickHeaderColumn }: TableColumnProps) {
 }
 
 const styles = {
+  th: css`
+    padding: 8px 16px;
+    border-bottom: 1px solid #e0e0e0;
+  `,
   icon: css`
     font-size: 14px;
     cursor: pointer;

@@ -54,6 +54,10 @@ function Home() {
             items={todos}
             shadow="0 8px 16px rgba(0, 0, 0, 0.2)"
             onRowClick={handleRowClick}
+            cellStyles={{
+              checkBox: css``,
+              text: css``,
+            }}
           />
         </div>
       </div>

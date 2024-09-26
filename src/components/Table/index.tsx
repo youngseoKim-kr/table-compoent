@@ -1,5 +1,5 @@
 import { Headers } from 'models/Todo'
-import { css } from '@emotion/react'
+import { css, Interpolation, Theme } from '@emotion/react'
 import React, { useEffect, useState } from 'react'
 import TableColumn from './TableColumn'
 import TableRow from './TableRow'
@@ -15,6 +15,10 @@ interface TableProps<T extends object> {
   borderRadius?: string
   shadow?: string
   hideHeader?: boolean
+  cellStyles?: {
+    checkBox?: Interpolation<Theme>
+    text?: Interpolation<Theme>
+  }
 }
 
 function Table<T extends object>({
@@ -26,6 +30,7 @@ function Table<T extends object>({
   shadow,
   hideHeader = false,
   onRowClick,
+  cellStyles,
 }: TableProps<T>) {
   const [sortedItems, setSortedItems] = useState<T[] | null>(null)
   const [headers, setHeaders] = useState<Headers[]>(initialHeaders)
@@ -93,7 +98,7 @@ function Table<T extends object>({
         {sortedItems.map((item, index: number) => (
           <tr key={index} css={styles.tr} onClick={(e) => onRowClick(e, item)}>
             {Object.keys(item).map((key, keyIndex: number) => (
-              <TableRow row={item} key={key} itemKey={key} type={headers[keyIndex].type} />
+              <TableRow row={item} key={key} itemKey={key} type={headers[keyIndex].type} cellStyles={cellStyles} />
             ))}
           </tr>
         ))}
