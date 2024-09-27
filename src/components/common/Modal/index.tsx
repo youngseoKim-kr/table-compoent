@@ -7,8 +7,9 @@ import Button from '@common/Button'
 import { HeaderType, ToDo } from '@models/Todo'
 import Checkbox from '@common/CheckBox'
 import { useForm } from 'react-hook-form'
-import React, { useEffect } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { useStores } from '@stores/index'
+import { observer } from 'mobx-react'
 
 const resetTodo: ToDo = {
   id: null,
@@ -26,7 +27,7 @@ interface ModalProps {
 }
 
 interface FormValueProps {
-  [key: string]: string | number | boolean | null
+  [key: string]: string | number | boolean | null | ReactNode
 }
 
 function Modal({ open, onClose, todo = resetTodo, isEdit }: ModalProps) {
@@ -51,7 +52,7 @@ function Modal({ open, onClose, todo = resetTodo, isEdit }: ModalProps) {
 
   useEffect(() => {
     reset(todo)
-  }, [todo, reset])
+  }, [todo, open, reset])
 
   if (!open) return null
 
@@ -133,4 +134,4 @@ const styles = {
   `,
 }
 
-export default Modal
+export default observer(Modal)

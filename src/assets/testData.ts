@@ -8,7 +8,7 @@ const tasks = [
   },
   {
     id: 2,
-    title: 'Vue.js 공부',
+    title: 'Vue.js 과제',
     content: 'Vue.js의 핵심 개념을 학습합니다.',
     date: '2021-10-02',
     completed: false,
@@ -30,5 +30,5 @@ const tasks = [
 ]
 
 export const setLocalStorage = () => {
-  localStorage.setItem('tableData', JSON.stringify(tasks))
+  localStorage.setItem('todoData', JSON.stringify(tasks))
 }

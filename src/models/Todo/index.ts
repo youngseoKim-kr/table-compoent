@@ -1,4 +1,16 @@
+import { ReactNode } from 'react'
+
+type WithNode<T> = T | ReactNode
+
 export type ToDo = {
+  id: WithNode<number | null>
+  title: WithNode<string>
+  content: WithNode<string>
+  date: WithNode<string>
+  completed: WithNode<boolean>
+}
+
+export type ToDoForm = {
   id: number | null
   title: string
   content: string

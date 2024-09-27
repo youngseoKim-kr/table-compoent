@@ -1,10 +1,9 @@
 import { Headers } from 'models/Todo'
-import { css, Interpolation, Theme } from '@emotion/react'
+import { css } from '@emotion/react'
 import React, { useEffect, useState } from 'react'
-import TableColumn from './TableColumn'
-import TableRow from './TableRow'
-import { observer } from 'mobx-react'
 import { colors } from '@styles/colors'
+import TableContext from './TableContext'
+import { observer } from 'mobx-react'
 
 interface TableProps<T extends object> {
   headers: Headers[]
@@ -14,11 +13,7 @@ interface TableProps<T extends object> {
   color?: string
   borderRadius?: string
   shadow?: string
-  hideHeader?: boolean
-  cellStyles?: {
-    checkBox?: Interpolation<Theme>
-    text?: Interpolation<Theme>
-  }
+  children: React.ReactNode
 }
 
 function Table<T extends object>({
@@ -28,9 +23,8 @@ function Table<T extends object>({
   color = colors.black,
   borderRadius = '8px',
   shadow,
-  hideHeader = false,
   onRowClick,
-  cellStyles,
+  children,
 }: TableProps<T>) {
   const [sortedItems, setSortedItems] = useState<T[] | null>(null)
   const [headers, setHeaders] = useState<Headers[]>(initialHeaders)
@@ -42,29 +36,19 @@ function Table<T extends object>({
     let newIsAsc: boolean | null
 
     if (column.isAsc === null) {
-      // 오름차순 정렬
-      resultSortedItems = sortedItems.slice().sort((a, b) => {
-        if (a[column.key] === null || b[column.key] === null) return 0
-        return a[column.key] > b[column.key] ? 1 : -1
-      })
+      resultSortedItems = sortedItems.slice().sort((a, b) => (a[column.key] > b[column.key] ? 1 : -1))
       newIsAsc = true
     } else if (column.isAsc) {
-      // 내림차순 정렬
-      resultSortedItems = sortedItems.slice().sort((a, b) => {
-        if (a[column.key] === null || b[column.key] === null) return 0
-        return a[column.key] < b[column.key] ? 1 : -1
-      })
+      resultSortedItems = sortedItems.slice().sort((a, b) => (a[column.key] < b[column.key] ? 1 : -1))
       newIsAsc = false
-    } else if (!column.isAsc) {
-      // 정렬 해제 (초기 상태로 복원)
+    } else {
       resultSortedItems = [...items]
       newIsAsc = null
     }
 
-    const updatedHeaders = headers.map((h) => ({
-      ...h,
-      isAsc: h.key === column.key ? newIsAsc : h.isAsc,
-    }))
+    const updatedHeaders = headers.map((h) =>
+      h.key === column.key ? { ...h, isAsc: newIsAsc } : { ...h, isAsc: null },
+    )
 
     setHeaders(updatedHeaders)
     setSortedItems(resultSortedItems)
@@ -75,42 +59,20 @@ function Table<T extends object>({
   }, [items])
 
   if (sortedItems === null) return null
-
   return (
-    <table
-      css={css(`
-      background-color: ${backgroundColor};
-      color: ${color || colors.white};
-      border-radius: ${borderRadius};
-      box-shadow: ${shadow || 'none'};
-    `)}
-    >
-      <thead>
-        {!hideHeader && (
-          <tr>
-            {headers.map((column, index: number) => (
-              <TableColumn onClickHeaderColumn={handleColumnSort} column={column} key={index} />
-            ))}
-          </tr>
-        )}
-      </thead>
-      <tbody>
-        {sortedItems.map((item, index: number) => (
-          <tr key={index} css={styles.tr} onClick={(e) => onRowClick(e, item)}>
-            {Object.keys(item).map((key, keyIndex: number) => (
-              <TableRow row={item} key={key} itemKey={key} type={headers[keyIndex].type} cellStyles={cellStyles} />
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <TableContext.Provider value={{ headers, sortedItems, handleColumnSort, onRowClick }}>
+      <table
+        css={css(`
+        background-color: ${backgroundColor};
+        color: ${color || colors.white};
+        border-radius: ${borderRadius};
+        box-shadow: ${shadow || 'none'};
+      `)}
+      >
+        {children}
+      </table>
+    </TableContext.Provider>
   )
-}
-
-const styles = {
-  tr: css`
-    cursor: pointer;
-  `,
 }
 
 export default observer(Table)
