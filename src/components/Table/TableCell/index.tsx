@@ -3,7 +3,6 @@ import Text from '@common/Text'
 import { Headers } from '@models/Todo'
 import Checkbox from '@common/CheckBox'
 import React from 'react'
-import { observer } from 'mobx-react'
 
 interface TableRowProps<T> extends React.HTMLAttributes<HTMLTableCellElement> {
   cellItem: T
@@ -57,4 +56,4 @@ const styles = {
   `,
 }
 
-export default observer(TableCell)
+export default TableCell

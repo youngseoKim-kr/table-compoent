@@ -1,14 +1,16 @@
-import React from 'react'
-import TableColumn from '../TableColumn'
-import { useTableContext } from '../TableContext'
-import { observer } from 'mobx-react'
+import React, { ReactElement } from 'react'
+import { TableColumnProps } from '../TableColumn'
+import { Headers } from '@models/Todo'
 
-interface TableHeaderProps extends React.HTMLAttributes<HTMLTableSectionElement> {
+export interface TableHeaderProps extends React.HTMLAttributes<HTMLTableSectionElement> {
   hideHeader?: boolean
+  headers?: Headers[]
+  handleColumnSort?: (column: Headers) => void
+  children?: ReactElement<TableColumnProps>
 }
 
-function TableHeader({ hideHeader, ...props }: TableHeaderProps) {
-  const { headers, handleColumnSort } = useTableContext()
+function TableHeader({ hideHeader, headers, handleColumnSort, children, ...props }: TableHeaderProps) {
+  if (!headers || !handleColumnSort) return null
 
   return (
     <>
@@ -16,7 +18,14 @@ function TableHeader({ hideHeader, ...props }: TableHeaderProps) {
         <thead {...props}>
           <tr>
             {headers.map((column, index) => (
-              <TableColumn onClickHeaderColumn={handleColumnSort} column={column} key={index} />
+              <React.Fragment key={index}>
+                {React.isValidElement(children)
+                  ? React.cloneElement(children, {
+                      column,
+                      onClickHeaderColumn: handleColumnSort,
+                    }) // cloneElement 사용
+                  : null}
+              </React.Fragment>
             ))}
           </tr>
         </thead>
@@ -25,4 +34,4 @@ function TableHeader({ hideHeader, ...props }: TableHeaderProps) {
   )
 }
 
-export default observer(TableHeader)
+export default TableHeader

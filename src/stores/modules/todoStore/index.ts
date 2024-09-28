@@ -3,17 +3,20 @@ import { Headers, HeaderType, ToDo } from '@models/Todo'
 
 export class ToDoStore {
   todos: ToDo[] | null = null
+  originalTodos: ToDo[] | null = null
   headers: Headers[] = []
 
   constructor() {
     makeObservable(this, {
       todos: observable,
+      originalTodos: observable,
       headers: observable,
 
       addTodo: action,
       setTodo: action,
       editTodo: action,
       editToDoItem: action,
+      sortToDoItem: action,
     })
   }
 
@@ -28,6 +31,7 @@ export class ToDoStore {
       }
     })
     this.todos = todoData
+    this.originalTodos = todoData
   }
 
   addTodo(todoData: ToDo) {
@@ -36,6 +40,7 @@ export class ToDoStore {
       todoData.id = this.todos.length + 1
     }
     this.todos?.push(todoData)
+    this.originalTodos?.push(todoData)
   }
 
   editTodo(todoData: ToDo) {
@@ -44,8 +49,11 @@ export class ToDoStore {
 
     if (index !== -1) {
       this.headers.forEach((header) => {
-        if (header.key !== 'id' && this.todos) {
-          this.todos[index][header.key] = todoData[header.key]
+        if (header.key !== 'id' && this.todos && this.originalTodos) {
+          const resultTodo = [...this.todos]
+          resultTodo[index][header.key] = todoData[header.key]
+          this.todos = resultTodo
+          this.originalTodos = this.todos
         }
       })
     }
@@ -56,7 +64,31 @@ export class ToDoStore {
     const index = this.todos.findIndex((todo) => todo.id === todoData.id)
 
     if (index !== -1) {
-      this.todos[index][key] = !todoData[key] // todos 수정
+      const resultTodo = [...this.todos]
+      resultTodo[index][key] = !todoData[key]
+      this.todos = resultTodo
     }
+  }
+
+  sortToDoItem(column: Headers) {
+    if (!column.isSortable) return
+
+    let newIsAsc: boolean | null
+
+    if (column.isAsc === null && this.todos) {
+      this.todos = this.todos.slice().sort((a, b) => (a[column.key] > b[column.key] ? 1 : -1))
+      newIsAsc = true
+    } else if (column.isAsc && this.todos) {
+      this.todos = this.todos.slice().sort((a, b) => (a[column.key] < b[column.key] ? 1 : -1))
+      newIsAsc = false
+    } else {
+      this.todos = this.originalTodos
+      newIsAsc = null
+    }
+
+    const updatedHeaders = this.headers.map((h) =>
+      h.key === column.key ? { ...h, isAsc: newIsAsc } : { ...h, isAsc: null },
+    )
+    this.headers = updatedHeaders
   }
 }

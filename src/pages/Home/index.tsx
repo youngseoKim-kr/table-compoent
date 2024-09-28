@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 import { useStores } from '@stores/index'
 import { useLocalStorage } from '@hooks/storage/local'
@@ -11,35 +11,40 @@ import { setLocalStorage } from '@assets/testData'
 import TableHeader from '../../components/Table/TableHeader'
 import TableBody from '../../components/Table/TableBody'
 import Table from '../../components/Table'
+import TableColumn from '../../components/Table/TableColumn'
+import TableRow from '../../components/Table/TableRow'
+import TableHeaderContainer from '../../components/Table/TableHeaderContainer'
+import TableBodyContainer from '../../components/Table/TableBodyContainer'
 
 function Home() {
   const { toDoStore } = useStores()
-  const { todos, headers } = toDoStore
   const { getLocalStorage } = useLocalStorage()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedTodo, setSelectedTodo] = useState<ToDo | undefined>(undefined)
   const [isEdit, setIsEdit] = useState(false)
 
-  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>, item: ToDo) => {
-    console.log(77, item)
+  const handleRowClick = useCallback((e: React.MouseEvent<HTMLTableRowElement>, item: ToDo) => {
     setSelectedTodo(item)
     setIsEdit(true)
     setIsModalOpen(true)
-  }
+  }, [])
 
-  const handleAddClick = () => {
+  const handleAddClick = useCallback(() => {
     setSelectedTodo(undefined)
     setIsEdit(false)
     setIsModalOpen(true)
-  }
+  }, [])
 
-  const handleCellClick = (e: React.MouseEvent<HTMLTableCellElement>, CellItem: ToDo, key: string) => {
-    const target = e.target as HTMLInputElement
-    if (target.type === 'checkbox') {
-      e.stopPropagation()
-      toDoStore.editToDoItem(CellItem, key)
-    }
-  }
+  const handleCellClick = useCallback(
+    (e: React.MouseEvent<HTMLTableCellElement>, CellItem: ToDo, key: string) => {
+      const target = e.target as HTMLInputElement
+      if (target.type === 'checkbox') {
+        e.stopPropagation()
+        toDoStore.editToDoItem(CellItem, key)
+      }
+    },
+    [toDoStore],
+  )
 
   useEffect(() => {
     setLocalStorage()
@@ -60,8 +65,6 @@ function Home() {
     }
   }, [])
 
-  if (todos === null) return null
-
   return (
     <>
       <div css={styles.container}>
@@ -71,20 +74,28 @@ function Home() {
               추가하기
             </Button>
           </Flex>
-          <Table headers={headers} items={todos} shadow="0 8px 16px rgba(0, 0, 0, 0.2)" onRowClick={handleRowClick}>
-            <TableHeader hideHeader={false} css={css(`color:black`)} />
-            <TableBody
-              onCellClick={handleCellClick}
-              css={css(``)}
-              cellStyles={{
-                checkBox: css`
-                  border-radius: 50%;
-                `,
-                text: css`
-                  width: 800px;
-                `,
-              }}
-            />
+          <Table shadow="0 8px 16px rgba(0, 0, 0, 0.2)">
+            <TableHeaderContainer>
+              <TableHeader hideHeader={false} css={css(`color:black`)}>
+                <TableColumn />
+              </TableHeader>
+            </TableHeaderContainer>
+            <TableBodyContainer>
+              <TableBody css={css(``)}>
+                <TableRow
+                  onCellClick={handleCellClick}
+                  onRowClick={handleRowClick}
+                  cellStyles={{
+                    checkBox: css`
+                      border-radius: 50%;
+                    `,
+                    text: css`
+                      width: 800px;
+                    `,
+                  }}
+                />
+              </TableBody>
+            </TableBodyContainer>
           </Table>
         </div>
       </div>

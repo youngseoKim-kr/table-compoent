@@ -3,15 +3,20 @@ import Text from '@common/Text'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { Headers } from '@models/Todo'
+import React from 'react'
 
-interface TableColumnProps {
-  column: Headers
-  onClickHeaderColumn: (column: Headers) => void
+export interface TableColumnProps extends React.HTMLAttributes<HTMLTableCellElement> {
+  column?: Headers
+  onClickHeaderColumn?: (column: Headers) => void
 }
 
-function TableColumn({ column, onClickHeaderColumn }: TableColumnProps) {
+function TableColumn({ column, onClickHeaderColumn, ...props }: TableColumnProps) {
+  if (!column || !onClickHeaderColumn) {
+    return null
+  }
+
   return (
-    <th align="center" css={[styles.th, { cursor: column.isSortable ? 'pointer' : 'default' }]}>
+    <th {...props} align="center" css={[styles.th, { cursor: column.isSortable ? 'pointer' : 'default' }]}>
       <Text typography="t3" bold={true} onClick={() => onClickHeaderColumn(column)}>
         {column.label}
       </Text>
