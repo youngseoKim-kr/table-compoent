@@ -25,7 +25,7 @@ export class ToDoStore {
       return {
         label: HeaderType[key]?.label,
         key,
-        isSortable: key === 'id' || key === 'date',
+        isSortable: key === 'id' || key === 'date' || key === 'content',
         isAsc: null,
         type: HeaderType[key].type,
       }
@@ -39,6 +39,7 @@ export class ToDoStore {
     if (!todoData.id) {
       todoData.id = this.todos.length + 1
     }
+
     this.todos?.push(todoData)
     this.originalTodos?.push(todoData)
   }
@@ -67,6 +68,7 @@ export class ToDoStore {
       const resultTodo = [...this.todos]
       resultTodo[index][key] = !todoData[key]
       this.todos = resultTodo
+      this.originalTodos = this.todos
     }
   }
 
@@ -76,19 +78,46 @@ export class ToDoStore {
     let newIsAsc: boolean | null
 
     if (column.isAsc === null && this.todos) {
-      this.todos = this.todos.slice().sort((a, b) => (a[column.key] > b[column.key] ? 1 : -1))
+      this.todos = this.todos.slice().sort((a, b) => {
+        const aValue = a[column.key]
+        const bValue = b[column.key]
+
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return aValue.localeCompare(bValue)
+        } else if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return aValue - bValue
+        } else {
+          return 0
+        }
+      })
       newIsAsc = true
     } else if (column.isAsc && this.todos) {
-      this.todos = this.todos.slice().sort((a, b) => (a[column.key] < b[column.key] ? 1 : -1))
+      this.todos = this.todos.slice().sort((a, b) => {
+        const aValue = a[column.key]
+        const bValue = b[column.key]
+
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return bValue.localeCompare(aValue)
+        } else if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return bValue - aValue
+        } else {
+          return 0
+        }
+      })
       newIsAsc = false
     } else {
-      this.todos = this.originalTodos
+      if (!this.originalTodos) return
+      this.todos = [...this.originalTodos]
       newIsAsc = null
     }
 
-    const updatedHeaders = this.headers.map((h) =>
-      h.key === column.key ? { ...h, isAsc: newIsAsc } : { ...h, isAsc: null },
+    this.headers = this.headers.map((h) =>
+      h.key === column.key
+        ? { ...h, isAsc: newIsAsc }
+        : {
+            ...h,
+            isAsc: null,
+          },
     )
-    this.headers = updatedHeaders
   }
 }

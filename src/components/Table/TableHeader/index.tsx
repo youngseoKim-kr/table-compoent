@@ -23,7 +23,7 @@ function TableHeader({ hideHeader, headers, handleColumnSort, children, ...props
                   ? React.cloneElement(children, {
                       column,
                       onClickHeaderColumn: handleColumnSort,
-                    }) // cloneElement 사용
+                    })
                   : null}
               </React.Fragment>
             ))}

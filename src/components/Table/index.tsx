@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import React from 'react'
 import { colors } from '@styles/colors'
 
-interface TableProps {
+interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   backgroundColor?: string
   color?: string
   borderRadius?: string
@@ -16,9 +16,11 @@ function Table({
   borderRadius = '8px',
   shadow,
   children,
+  ...props
 }: TableProps) {
   return (
     <table
+      {...props}
       css={css(`
         background-color: ${backgroundColor};
         color: ${color || colors.white};

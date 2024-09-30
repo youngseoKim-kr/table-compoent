@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useMemo } from 'react'
 import { observer } from 'mobx-react'
 import { useStores } from '@stores/index'
 import { TableBodyProps } from '../TableBody'
@@ -9,12 +9,10 @@ interface TableBodyContainerProps<T extends object> {
 
 function TableBodyContainerProps<T extends object>({ children }: TableBodyContainerProps<T>) {
   const { toDoStore } = useStores()
-  const todoItems = toDoStore.todos as unknown as T[]
-  const { headers } = toDoStore
+  const todoItems = useMemo(() => toDoStore.todos as unknown as T[], [toDoStore.todos])
+  const headers = useMemo(() => toDoStore.headers, [toDoStore.headers])
 
   if (!todoItems || !headers) return null
-
-  console.log(todoItems)
 
   return (
     <React.Fragment>

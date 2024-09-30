@@ -7,7 +7,7 @@ import Button from '@common/Button'
 import { HeaderType, ToDo } from '@models/Todo'
 import Checkbox from '@common/CheckBox'
 import { useForm } from 'react-hook-form'
-import React, { ReactNode, useEffect } from 'react'
+import React, { ReactNode, useCallback, useEffect } from 'react'
 import { useStores } from '@stores/index'
 import { observer } from 'mobx-react'
 
@@ -38,17 +38,23 @@ function Modal({ open, onClose, todo = resetTodo, isEdit }: ModalProps) {
   const { register, handleSubmit, setValue, reset, getValues } = methods
   const { toDoStore } = useStores()
 
-  const handleFormSubmit = (formData: FormValueProps) => {
-    toDoStore.addTodo(formData as ToDo)
-    reset()
-    onClose()
-  }
+  const handleFormSubmit = useCallback(
+    (formData: FormValueProps) => {
+      toDoStore.addTodo(formData as ToDo)
+      reset()
+      onClose()
+    },
+    [toDoStore, reset, onClose],
+  )
 
-  const handleFormEditSubmit = (formData: FormValueProps) => {
-    toDoStore.editTodo(formData as ToDo)
-    reset()
-    onClose()
-  }
+  const handleFormEditSubmit = useCallback(
+    (formData: FormValueProps) => {
+      toDoStore.editTodo(formData as ToDo)
+      reset()
+      onClose()
+    },
+    [toDoStore, reset, onClose],
+  )
 
   useEffect(() => {
     reset(todo)

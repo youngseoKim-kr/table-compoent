@@ -83,6 +83,7 @@ function Home() {
             <TableBodyContainer>
               <TableBody css={css(``)}>
                 <TableRow
+                  css={css(`border-bottom: 1px solid #e0e0e0;`)}
                   onCellClick={handleCellClick}
                   onRowClick={handleRowClick}
                   cellStyles={{
