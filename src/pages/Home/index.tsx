@@ -77,7 +77,9 @@ function Home() {
           <Table shadow="0 8px 16px rgba(0, 0, 0, 0.2)">
             <TableHeaderContainer>
               <TableHeader hideHeader={false} css={css(`color:black`)}>
-                <TableColumn />
+                <TableColumn
+                // css={css(`border:4px solid black`)}
+                />
               </TableHeader>
             </TableHeaderContainer>
             <TableBodyContainer>

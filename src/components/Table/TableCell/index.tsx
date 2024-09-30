@@ -20,7 +20,6 @@ function TableCell<T>({ cellItem, itemKey, type, cellStyles, onCellClick, ...pro
 
   const handleClick = (e: React.MouseEvent<HTMLTableCellElement>) => {
     if (onCellClick) {
-      // 추가 매개변수는 클로저로 처리
       onCellClick(e, cellItem, itemKey)
     }
   }
